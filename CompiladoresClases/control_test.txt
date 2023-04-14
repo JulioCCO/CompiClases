@@ -1,0 +1,13 @@
+begin
+control id:
+    cover 2:
+        x:=10
+        break;
+    cover "PERRO":
+        perro:= "perro gato ";
+        dog:= "perro"
+        break;
+    cover:
+        x:=10
+        break;
+end

@@ -25,12 +25,12 @@ public interface AlphaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCommandAST(AlphaParser.CommandASTContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code assingnSingleCommandAST}
+	 * Visit a parse tree produced by the {@code assignSingleCommandAST}
 	 * labeled alternative in {@link AlphaParser#singleCommand}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssingnSingleCommandAST(AlphaParser.AssingnSingleCommandASTContext ctx);
+	T visitAssignSingleCommandAST(AlphaParser.AssignSingleCommandASTContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code callSingleCommandAST}
 	 * labeled alternative in {@link AlphaParser#singleCommand}.
@@ -67,6 +67,20 @@ public interface AlphaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBlockSingleCommandAST(AlphaParser.BlockSingleCommandASTContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code methodCallAST}
+	 * labeled alternative in {@link AlphaParser#methodCall}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMethodCallAST(AlphaParser.MethodCallASTContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code actualParamAST}
+	 * labeled alternative in {@link AlphaParser#actualParam}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitActualParamAST(AlphaParser.ActualParamASTContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code declarationAST}
 	 * labeled alternative in {@link AlphaParser#declaration}.
 	 * @param ctx the parse tree
@@ -74,12 +88,12 @@ public interface AlphaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclarationAST(AlphaParser.DeclarationASTContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code constDeclarationAST}
+	 * Visit a parse tree produced by the {@code constSingleDeclarationAST}
 	 * labeled alternative in {@link AlphaParser#singleDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConstDeclarationAST(AlphaParser.ConstDeclarationASTContext ctx);
+	T visitConstSingleDeclarationAST(AlphaParser.ConstSingleDeclarationASTContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code varDeclarationAST}
 	 * labeled alternative in {@link AlphaParser#singleDeclaration}.
@@ -87,6 +101,27 @@ public interface AlphaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVarDeclarationAST(AlphaParser.VarDeclarationASTContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code methodSingleDeclaration}
+	 * labeled alternative in {@link AlphaParser#singleDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMethodSingleDeclaration(AlphaParser.MethodSingleDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code idDeclAST}
+	 * labeled alternative in {@link AlphaParser#idDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdDeclAST(AlphaParser.IdDeclASTContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code paramDeclsAST}
+	 * labeled alternative in {@link AlphaParser#paramDecls}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParamDeclsAST(AlphaParser.ParamDeclsASTContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code typeDenoterAST}
 	 * labeled alternative in {@link AlphaParser#typeDenoter}.
@@ -116,12 +151,26 @@ public interface AlphaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIdPrimaryExpressionAST(AlphaParser.IdPrimaryExpressionASTContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code groupPrimaryExpressionAST}
+	 * Visit a parse tree produced by the {@code charPrimaryExpressionAST}
 	 * labeled alternative in {@link AlphaParser#primaryExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGroupPrimaryExpressionAST(AlphaParser.GroupPrimaryExpressionASTContext ctx);
+	T visitCharPrimaryExpressionAST(AlphaParser.CharPrimaryExpressionASTContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code parenthesisPrimaryExpressionAST}
+	 * labeled alternative in {@link AlphaParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParenthesisPrimaryExpressionAST(AlphaParser.ParenthesisPrimaryExpressionASTContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code methodCallPrimaryExpressionAST}
+	 * labeled alternative in {@link AlphaParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMethodCallPrimaryExpressionAST(AlphaParser.MethodCallPrimaryExpressionASTContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AlphaParser#operator}.
 	 * @param ctx the parse tree

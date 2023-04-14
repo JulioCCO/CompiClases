@@ -27,23 +27,21 @@ Do: 'do';
 Let: 'let';
 In: 'in';
 Begin: 'begin';
+End: 'end';
 Const: 'const';
 Var: 'var';
-Switch: 'switch';
-Case: 'case';
+//TAREA PALABRAS RESERVADAS
+Control: 'control';
+Cover: 'cover';
 Break: 'break';
-Default: 'default';
-End: 'end';
-LeftBracket: '{';
-RightBracket: '}';
+PLAIN_TEXT : '"' (LETTER|DIGIT|WS)* '"';
+VOID : 'void';
+//FIN DE TAREAS PALABRAS RESERVADAS
+NUM     : DIGIT+;
+ID      : LETTER (LETTER|DIGIT)*;
+Char    : '\'' LETTER '\'';
+fragment LETTER  : [a-z]|[A-Z];
+fragment DIGIT   : [0-9];
 
-String : QuoMark(Letter|Digit|WS)*QuoMark;
-
-Num     : Digit+;
-ID      : Letter (Letter|Digit)*;
-fragment Letter  : [a-z]|[A-Z];
-fragment Digit   : [0-9];
-fragment QuoMark : '"';
-
-Commet : '//' ~[\r\n]* -> skip;
+COMMENT : '//' ~[\r\n]* -> skip;
 WS      : [ \t\n\r]+ -> skip ;

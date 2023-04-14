@@ -10,8 +10,7 @@ import java.util.ArrayList;
  */
 public class MyErrorListener extends BaseErrorListener {
 
-
-    public ArrayList<String> errorMsgs = new ArrayList<String>();
+    public ArrayList<String> errorMsgs;
 
     public MyErrorListener ( )
     {
@@ -19,18 +18,18 @@ public class MyErrorListener extends BaseErrorListener {
     }
 
     @Override
-    public void syntaxError(Recognizer<?, ?> recognizer,
+    public void syntaxError(Recognizer<?, ?> recognizer, // quien?, el objeto que reporta el error
                             Object offendingSymbol,
-                            int line,
-                            int charPositionInLine,
-                            String msg,
+                            int line, // fila
+                            int charPositionInLine, // columna
+                            String msg, // mensaje de error // en ingles
                             RecognitionException re) {
-        if (recognizer instanceof AlphaParser)
-            errorMsgs.add(new String("PARSER ERROR - line "+line+":"+charPositionInLine + " " + msg));
+            if (recognizer instanceof AlphaParser)
+            errorMsgs.add(new String("ERROR DE PARSER - Linea "+line+":"+charPositionInLine + " " + msg));
         else if (recognizer instanceof AlphaScanner)
-            errorMsgs.add(new String("SCANNER ERROR - line "+line+":"+charPositionInLine + " " + msg ));
+            errorMsgs.add(new String("ERROR DE SCANNER - Linea "+line+":"+charPositionInLine + " " + msg ));
         else
-            errorMsgs.add(new String("Other Error"));
+            errorMsgs.add(new String("Error excluyente"));
     }
 
     public boolean hasErrors ( )
