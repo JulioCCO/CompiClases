@@ -35,7 +35,7 @@ Control: 'control';
 Cover: 'cover';
 Break: 'break';
 PLAIN_TEXT : '"' (LETTER|DIGIT|WS)* '"';
-VOID : 'void';
+Void : 'void';
 //FIN DE TAREAS PALABRAS RESERVADAS
 NUM     : DIGIT+;
 ID      : LETTER (LETTER|DIGIT)*;

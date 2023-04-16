@@ -6,42 +6,44 @@ options {
 }
 
 // Start symbol
-program: singleCommand EOF                                                          #programAST;
+program: singleCommand EOF                                                #programAST;
 
 // Production rules
 
-command : singleCommand (Semicolon singleCommand)*                                  #commandAST;
+command : singleCommand (Semicolon singleCommand)*                        #commandAST;
 
-singleCommand:  ID Assign expression                                                #assignSingleCommandAST
-              | methodCall                                                          #callSingleCommandAST
-              | If expression Then singleCommand (Else singleCommand)?              #ifSingleCommandAST
-              | While expression Do singleCommand                                   #whileSingleCommandAST
-              | Let declaration In singleCommand                                    #letSingleCommandAST
-              | Begin command End                                                   #blockSingleCommandAST
+singleCommand:  ID Assign expression                                      #assignSingleCommandAST
+              | methodCall                                                #callSingleCommandAST
+              | If expression Then singleCommand (Else singleCommand)?    #ifSingleCommandAST
+              | While expression Do singleCommand                         #whileSingleCommandAST
+              | Let declaration In singleCommand                          #letSingleCommandAST
+              | Begin command End                                         #blockSingleCommandAST
               ;
 
 
-methodCall: ID LeftParen actualParam RightParen                                     #methodCallAST;
+methodCall: ID LeftParen actualParam RightParen                           #methodCallAST;
 
-actualParam : expression (Comma expression)*                                        #actualParamAST;
+actualParam : expression (Comma expression)*                              #actualParamAST;
 
-declaration: singleDeclaration (Semicolon singleDeclaration)*                       #declarationAST ;
+declaration: singleDeclaration (Semicolon singleDeclaration)*             #declarationAST ;
 
-singleDeclaration: Const ID Tilde expression                                        #constSingleDeclarationAST
-                    | Var ID Colon typeDenoter                                      #varDeclarationAST
-              | (typeDenoter|VOID) ID LeftParen paramDecls RightParen singleCommand #methodSingleDeclaration;
+singleDeclaration: Const ID Tilde expression                              #constDeclarationAST
+                    | Var idDeclaration                                   #varDeclarationAST
+                    | (typeDenoter|Void) ID LeftParen
+                    paramDecls RightParen singleCommand                   #methodDeclarationAST;
 
-idDeclaration : ID Colon typeDenoter                                                #idDeclAST;
-paramDecls: idDeclaration (Comma idDeclaration)*                                    #paramDeclsAST;
-typeDenoter: ID                                                                     #typeDenoterAST;
+idDeclaration : ID Colon typeDenoter                                      #idDeclAST;
+paramDecls : idDeclaration (Comma idDeclaration)*                         #paramDeclsAST;
 
-expression: primaryExpression (operator primaryExpression)*                         #expressionAST;
+typeDenoter: ID                                                           #typeDenoterAST;
 
-primaryExpression: NUM                                                              #numPrimaryExpressionAST
-                  | ID                                                              #idPrimaryExpressionAST
-                  | Char                                                            #charPrimaryExpressionAST
-                  | LeftParen expression RightParen                                 #parenthesisPrimaryExpressionAST
-                  | methodCall                                                      #methodCallPrimaryExpressionAST
+expression: primaryExpression (operator primaryExpression)*               #expressionAST;
+
+primaryExpression: NUM                                                    #numPrimaryExpressionAST
+                  | ID                                                    #idPrimaryExpressionAST
+                  | Char                                                  #charPrimaryExpressionAST
+                  | LeftParen expression RightParen                       #groupPrimaryExpressionAST
+                  | methodCall                                            #callPrimaryExpressionAST
                   ;
 
 operator: Plus

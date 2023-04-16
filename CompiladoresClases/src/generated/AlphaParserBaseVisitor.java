@@ -1,4 +1,4 @@
-// Generated from java-escape by ANTLR 4.11.1
+// Generated from E:/CompiladoresClases/CompiladoresClases\AlphaParser.g4 by ANTLR 4.12.0
 package generated;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -95,7 +95,7 @@ public class AlphaParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitConstSingleDeclarationAST(AlphaParser.ConstSingleDeclarationASTContext ctx) { return visitChildren(ctx); }
+	@Override public T visitConstDeclarationAST(AlphaParser.ConstDeclarationASTContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -109,7 +109,7 @@ public class AlphaParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMethodSingleDeclaration(AlphaParser.MethodSingleDeclarationContext ctx) { return visitChildren(ctx); }
+	@Override public T visitMethodDeclarationAST(AlphaParser.MethodDeclarationASTContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -165,14 +165,14 @@ public class AlphaParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitParenthesisPrimaryExpressionAST(AlphaParser.ParenthesisPrimaryExpressionASTContext ctx) { return visitChildren(ctx); }
+	@Override public T visitGroupPrimaryExpressionAST(AlphaParser.GroupPrimaryExpressionASTContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMethodCallPrimaryExpressionAST(AlphaParser.MethodCallPrimaryExpressionASTContext ctx) { return visitChildren(ctx); }
+	@Override public T visitCallPrimaryExpressionAST(AlphaParser.CallPrimaryExpressionASTContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

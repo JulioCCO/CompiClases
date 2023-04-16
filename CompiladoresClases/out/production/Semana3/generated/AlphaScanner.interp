@@ -75,7 +75,7 @@ Control
 Cover
 Break
 PLAIN_TEXT
-VOID
+Void
 NUM
 ID
 Char
@@ -116,7 +116,7 @@ Control
 Cover
 Break
 PLAIN_TEXT
-VOID
+Void
 NUM
 ID
 Char

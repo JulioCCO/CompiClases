@@ -7,14 +7,13 @@ in
 begin
     let
         var local:int;
+        var local:int;
         var w:int
     in
     begin
         y := local;
         y := w
-
     end;
     y := w;
-    y:=local;
     met(y)
 end

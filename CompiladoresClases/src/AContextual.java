@@ -3,50 +3,64 @@ import generated.AlphaParserBaseVisitor;
 import org.antlr.v4.runtime.Token;
 
 public class AContextual extends AlphaParserBaseVisitor<Object> {
-    private TablaSimbolos tabla;
+    private TablaSimbolos laTabla;
 
     public AContextual() {
-        this.tabla = new TablaSimbolos();
+        this.laTabla = new TablaSimbolos();
     }
-
+    private String showType(int type){
+        switch(type){
+            case 0: return "int";
+            case 1: return "char";
+            case 2: return "void";
+            default: return "none";
+        }
+    }
+    private String showErrorPosition(Token t){
+        return " Fila: "+t.getLine() + " , Columna: " + (t.getCharPositionInLine()+1);
+    }
+    private boolean isMultitype(String op){
+        switch (op){
+            case "==": return true;
+            case "!=": return true;
+            default:  return false;
+        }
+    }
     @Override
     public Object visitProgramAST(AlphaParser.ProgramASTContext ctx) {
-
-
         visit(ctx.singleCommand());
         return null;
     }
 
     @Override
     public Object visitCommandAST(AlphaParser.CommandASTContext ctx) {
-
         visit(ctx.singleCommand(0));
         for (int i = 1; i < ctx.singleCommand().size(); i++) {
             visit(ctx.singleCommand(i));
         }
-
         return null;
     }
 
     @Override
     public Object visitAssignSingleCommandAST(AlphaParser.AssignSingleCommandASTContext ctx) {
-        TablaSimbolos.Ident i = this.tabla.buscar(ctx.ID().getSymbol().getText());
-        if (i == null) {
-            System.out.println("Error de alcance, identificador no declarado en asignacion");
-        } else {
-            int tipoId = i.type;
-            int tipoExpr = (int) visit(ctx.expression());
-            if (tipoExpr != tipoId) {
-                System.out.println("Error de tipos: Tipo de identificador: " + ctx.ID().getSymbol().getText() + " no es igual al tipo de la expresion"
-                        + " en la linea: " + ctx.ID().getSymbol().getLine() + " y columna: " + ctx.ID().getSymbol().getCharPositionInLine());
+        try {
+            TablaSimbolos.Ident i = this.laTabla.buscar(ctx.ID().getText());
+            if (i == null)
+                System.out.println("Error de alcances, identificador \"" + ctx.ID().getText() + "\" no declarado en asignación." + showErrorPosition(ctx.ID().getSymbol()));
+            else {
+                int tipoID = i.type;
+                int tipoExpr = (int) visit(ctx.expression());
+                if (tipoID != tipoExpr)//o al menos compatibles
+                    System.out.println("Error de tipos: \""+ showType(tipoID) + "\" y \"" + showType(tipoExpr) + "\" no son compatibles." + showErrorPosition(ctx.Assign().getSymbol()));
             }
         }
+        catch (RuntimeException e) {}
+
         return null;
     }
 
     @Override
     public Object visitCallSingleCommandAST(AlphaParser.CallSingleCommandASTContext ctx) {
-
         visit(ctx.methodCall());
         return null;
     }
@@ -56,8 +70,8 @@ public class AContextual extends AlphaParserBaseVisitor<Object> {
 
         visit(ctx.expression());
         visit(ctx.singleCommand(0));
-        if (ctx.singleCommand(1) != null) visit(ctx.singleCommand(1));
-
+        if (ctx.singleCommand().size()>1)
+            visit(ctx.singleCommand(1));
         return null;
     }
 
@@ -71,11 +85,11 @@ public class AContextual extends AlphaParserBaseVisitor<Object> {
 
     @Override
     public Object visitLetSingleCommandAST(AlphaParser.LetSingleCommandASTContext ctx) {
-        tabla.openScope();
+        laTabla.openScope();
         visit(ctx.declaration());
-        tabla.imprimir();
+        laTabla.imprimir();
         visit(ctx.singleCommand());
-        tabla.closeScope();
+        laTabla.closeScope();
         return null;
     }
 
@@ -95,70 +109,88 @@ public class AContextual extends AlphaParserBaseVisitor<Object> {
         }
         return null;
     }
-
     @Override
-    public Object visitConstSingleDeclarationAST(AlphaParser.ConstSingleDeclarationASTContext ctx) {
-
+    public Object visitConstDeclarationAST(AlphaParser.ConstDeclarationASTContext ctx) {
+        if(this.laTabla.buscar(ctx.ID().getText()) != null){
+            System.out.println("Error de alcances, variable "+ctx.ID().getText()+" ya declarada." + showErrorPosition(ctx.ID().getSymbol()));
+            throw new RuntimeException();
+        }
         visit(ctx.expression());
         return null;
-
     }
 
     @Override
     public Object visitVarDeclarationAST(AlphaParser.VarDeclarationASTContext ctx) {
-        try {
-            Token idName = ctx.ID().getSymbol();
-            int idTipo = (int) visit(ctx.typeDenoter());
-            this.tabla.insertar(idName, idTipo, true);
-        } catch (Exception e) {
-        }
+
+        visit(ctx.idDeclaration());
         return null;
     }
 
     @Override
     public Object visitTypeDenoterAST(AlphaParser.TypeDenoterASTContext ctx) {
-        int result = -1;
-        if (ctx.ID().getText().equals("int")) result = 0;
-        else if(ctx.ID().getText().equals("char")) result = 1;
+        int result=-1;
+        if (ctx.ID().getText().equals("int"))
+            result = 0;
+        else if (ctx.ID().getText().equals("char"))
+            result = 1;
         else {
-
-            System.out.println("Error de tipos: Tipo: " + ctx.ID().getText() + " no es un tipo valido"
-                    + " en la linea: " + ctx.ID().getSymbol().getLine() + " y columna: " + ctx.ID().getSymbol().getCharPositionInLine());
+            System.out.println("Error de tipos: Tipo: \"" + ctx.ID().getText() + "\" no es un tipo válido." + showErrorPosition(ctx.ID().getSymbol()));
             throw new RuntimeException();
         }
-        //visit(ctx.ID());
         return result;
     }
 
     @Override
     public Object visitExpressionAST(AlphaParser.ExpressionASTContext ctx) {
         int result = -1;
+        String op="";
         result = (int) visit(ctx.primaryExpression(0));
+        for (int i = 1; ctx.primaryExpression().size() > i; i++) {
+            op = (String) visit(ctx.operator(i-1));
+            int type2 = (int) visit(ctx.primaryExpression(i));
+            if (isMultitype(op)){ //el operador es multitipo (char, int ...)
+                if ((result==0&&type2==0) || (result==1&&type2==1))
+                    result= type2; //si el operador recibiera dos tipos iguales pero devolviera otro, debe de cambiarse
+                else
+                    System.out.println("Error de tipos: "+showType(result)+ " y " + showType(type2) + " no son compatibles para el operador "+ op + "." + showErrorPosition(ctx.operator(i-1).start));
+            }
+            else { //el operador es solo para int
+                if ((result==0&&type2==0))
+                    result= type2;
+                else
+                    System.out.println("Error de tipos: "+showType(result)+ " y " + showType(type2) + " no son compatibles para el operador "+ op + "." + showErrorPosition(ctx.operator(i-1).start));
+            }
 
-        //HAY QEU VALIDAR LOS TIPOS DE LAS EXPERSIONES CON RESPECTO AL TIPO DEL OPERADOR
-        for (int i = 1; i < ctx.primaryExpression().size(); i++) {
-            visit(ctx.operator(i - 1));
-            visit(ctx.primaryExpression(i));
         }
-
         return result;
     }
 
     @Override
     public Object visitNumPrimaryExpressionAST(AlphaParser.NumPrimaryExpressionASTContext ctx) {
-
-
         return 0; // 0 es entero(Int)
     }
 
     @Override
     public Object visitIdPrimaryExpressionAST(AlphaParser.IdPrimaryExpressionASTContext ctx) {
-
-        return (Object) tabla.buscar(ctx.ID().getText());
+        int tipo=-1;
+        TablaSimbolos.Ident id = laTabla.buscar(ctx.ID().getText());
+        if (id!=null){
+            if (!id.isMethod)
+                tipo = id.type;
+            else {
+                System.out.println("Error de tipos: " + ctx.ID().getText() + " no es una variable/constante." + showErrorPosition(ctx.ID().getSymbol()));
+                throw new RuntimeException();
+            }
+        }
+        else {
+            System.out.println("Error de Alcances: \""+ ctx.ID().getText() + "\" no declarado." + showErrorPosition(ctx.ID().getSymbol()));
+            throw new RuntimeException();
+        }
+        return tipo;
     }
 
     @Override
-    public Object visitParenthesisPrimaryExpressionAST(AlphaParser.ParenthesisPrimaryExpressionASTContext ctx) {
+    public Object visitGroupPrimaryExpressionAST(AlphaParser.GroupPrimaryExpressionASTContext ctx) {
 
         visit(ctx.expression());
         return null;
@@ -166,51 +198,7 @@ public class AContextual extends AlphaParserBaseVisitor<Object> {
 
     @Override
     public Object visitOperator(AlphaParser.OperatorContext ctx) {
-
-        //switch case for all operators
-        switch (ctx.getClass().getSimpleName()) {
-            case "+":
-                System.out.println(ctx.Plus().getText());
-                break;
-            case "-":
-                System.out.println(ctx.Minus().getText());
-                break;
-            case "*":
-                System.out.println(ctx.Mult().getText());
-                break;
-            case "/":
-                System.out.println(ctx.Div().getText());
-                break;
-            case "%":
-                System.out.println(ctx.Mod().getText());
-                break;
-            case "==":
-                System.out.println(ctx.Equals().getText());
-                break;
-            case "!=":
-                System.out.println(ctx.NotEquals().getText());
-                break;
-            case "<":
-                System.out.println(ctx.LessThan().getText());
-                break;
-            case "<=":
-                System.out.println(ctx.LessThanOrEquals().getText());
-                break;
-            case ">":
-                System.out.println(ctx.GreaterThan().getText());
-                break;
-            case ">=":
-                System.out.println(ctx.GreaterThanOrEquals().getText());
-                break;
-            /*case "&&":
-                System.out.println(ctx.And().getText());
-                break;
-            case "||":
-                System.out.println(ctx.Or().getText());
-                break;*/
-
-        }
-        return null;
+        return ctx.getChild(0).getText(); //solo hay un hijo independientemente del operador que sea
     }
 
     @Override
@@ -219,26 +207,34 @@ public class AContextual extends AlphaParserBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitMethodSingleDeclaration(AlphaParser.MethodSingleDeclarationContext ctx) {
-
+    public Object visitMethodDeclarationAST(AlphaParser.MethodDeclarationASTContext ctx) {
         try {
             Token id = ctx.ID().getSymbol();
             int idType = 2;
-            if(ctx.VOID() == null) idType = (int) visit(ctx.typeDenoter());
-            this.tabla.insertar(id, idType, true);
-            //TODO: Visita de parametros
-            //TODO: Visita de cuerpo de metodo
-        } catch (Exception e) {}
+            if (ctx.Void() == null)
+                idType = (int) visit(ctx.typeDenoter());
+            this.laTabla.insertar(id, idType,true);
+
+            //TODO: visita de parámetros
+
+            //TODO: visita de cuerpo de metodo
+        } catch (Exception e){}
         return null;
     }
+
+
 
     @Override
     public Object visitIdDeclAST(AlphaParser.IdDeclASTContext ctx) {
         try {
             Token id = ctx.ID().getSymbol();
+            if(this.laTabla.buscar(ctx.ID().getText()) != null){
+                System.out.println("Error de alcances, variable "+ctx.ID().getText()+" ya declarada." + showErrorPosition(ctx.ID().getSymbol()));
+                throw new RuntimeException();
+            }
             int idType = (int) visit(ctx.typeDenoter());
-            this.tabla.insertar(id, idType, false);
-        } catch (Exception e) {}
+            this.laTabla.insertar(id, idType,false);
+        } catch (Exception e){}
         return null;
     }
 
@@ -250,33 +246,24 @@ public class AContextual extends AlphaParserBaseVisitor<Object> {
     @Override
     public Object visitMethodCallAST(AlphaParser.MethodCallASTContext ctx) {
         int type = -1;
-        TablaSimbolos.Ident i = this.tabla.buscar(ctx.ID().getSymbol().getText());
+        TablaSimbolos.Ident i = this.laTabla.buscar(ctx.ID().getSymbol().getText());
         if (i == null) {
             System.out.println("Error de alcance, metodo "+ctx.ID().getText() + " no declarado en asignacion");
         } else {
             type = i.type;
             //TODO: Verificar cantidad y tipo de parametros
         }
-
-
         return type;
     }
 
     @Override
-    public Object visitMethodCallPrimaryExpressionAST(AlphaParser.MethodCallPrimaryExpressionASTContext ctx) {
-        return super.visitMethodCallPrimaryExpressionAST(ctx);
+    public Object visitCallPrimaryExpressionAST(AlphaParser.CallPrimaryExpressionASTContext ctx) {
+        visit(ctx.methodCall());
+        return null;
     }
-
     @Override
     public Object visitCharPrimaryExpressionAST(AlphaParser.CharPrimaryExpressionASTContext ctx) {
         return 1; // 1 es char
     }
-
 }
 
-
-
-/*
-*  void | tipo fact (id:int, id:int, id:int) begin ... end
-*
-* */
