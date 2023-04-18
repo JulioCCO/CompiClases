@@ -692,8 +692,8 @@ public class AlphaParser extends Parser {
 		public TerminalNode Const() { return getToken(AlphaParser.Const, 0); }
 		public TerminalNode ID() { return getToken(AlphaParser.ID, 0); }
 		public TerminalNode Tilde() { return getToken(AlphaParser.Tilde, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public TypeDenoterContext typeDenoter() {
+			return getRuleContext(TypeDenoterContext.class,0);
 		}
 		public ConstDeclarationASTContext(SingleDeclarationContext ctx) { copyFrom(ctx); }
 		@Override
@@ -721,7 +721,7 @@ public class AlphaParser extends Parser {
 				setState(88);
 				match(Tilde);
 				setState(89);
-				expression();
+				typeDenoter();
 				}
 				break;
 			case Var:
@@ -1269,7 +1269,7 @@ public class AlphaParser extends Parser {
 		"\u0000\u0000\u0000RU\u0001\u0000\u0000\u0000SQ\u0001\u0000\u0000\u0000"+
 		"ST\u0001\u0000\u0000\u0000T\u000b\u0001\u0000\u0000\u0000US\u0001\u0000"+
 		"\u0000\u0000VW\u0005\u001c\u0000\u0000WX\u0005$\u0000\u0000XY\u0005\u000e"+
-		"\u0000\u0000Yg\u0003\u0014\n\u0000Z[\u0005\u001d\u0000\u0000[g\u0003\u000e"+
+		"\u0000\u0000Yg\u0003\u0012\t\u0000Z[\u0005\u001d\u0000\u0000[g\u0003\u000e"+
 		"\u0007\u0000\\_\u0003\u0012\t\u0000]_\u0005\"\u0000\u0000^\\\u0001\u0000"+
 		"\u0000\u0000^]\u0001\u0000\u0000\u0000_`\u0001\u0000\u0000\u0000`a\u0005"+
 		"$\u0000\u0000ab\u0005\u0010\u0000\u0000bc\u0003\u0010\b\u0000cd\u0005"+

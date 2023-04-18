@@ -30,6 +30,7 @@ Begin: 'begin';
 End: 'end';
 Const: 'const';
 Var: 'var';
+
 //TAREA PALABRAS RESERVADAS
 Control: 'control';
 Cover: 'cover';

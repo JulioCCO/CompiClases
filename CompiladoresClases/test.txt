@@ -1,14 +1,16 @@
 let
     var y:int;
     var w:char;
+    const PI~int;
+    const PI~int;
     void met(x:int)
         x := 20
 in
 begin
     let
         var local:int;
-        var local:int;
-        var w:int
+        var local:char;
+        var z:int
     in
     begin
         y := local;

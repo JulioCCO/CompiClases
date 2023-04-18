@@ -27,12 +27,13 @@ actualParam : expression (Comma expression)*                              #actua
 
 declaration: singleDeclaration (Semicolon singleDeclaration)*             #declarationAST ;
 
-singleDeclaration: Const ID Tilde expression                              #constDeclarationAST
+singleDeclaration: Const ID Tilde typeDenoter                             #constDeclarationAST
                     | Var idDeclaration                                   #varDeclarationAST
                     | (typeDenoter|Void) ID LeftParen
                     paramDecls RightParen singleCommand                   #methodDeclarationAST;
 
 idDeclaration : ID Colon typeDenoter                                      #idDeclAST;
+
 paramDecls : idDeclaration (Comma idDeclaration)*                         #paramDeclsAST;
 
 typeDenoter: ID                                                           #typeDenoterAST;
@@ -46,6 +47,7 @@ primaryExpression: NUM                                                    #numPr
                   | methodCall                                            #callPrimaryExpressionAST
                   ;
 
+
 operator: Plus
         | Minus
         | Mult
@@ -56,5 +58,5 @@ operator: Plus
         | LessThan
         | GreaterThan
         | LessThanOrEquals
-        | GreaterThanOrEquals
-        ;
+        | GreaterThanOrEquals;
+
