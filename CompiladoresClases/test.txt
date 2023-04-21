@@ -1,8 +1,8 @@
 let
     var y:int;
     var w:char;
-    const PI~int;
-    const PI~int;
+    const PI~'a';
+    const PI~2+3+4;
     void met(x:int)
         x := 20
 in

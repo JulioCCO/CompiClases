@@ -109,10 +109,8 @@ public class AContextual extends AlphaParserBaseVisitor<Object> {
         }
         return null;
     }
-
-    @Override
-    public Object visitConstDeclarationAST(AlphaParser.ConstDeclarationASTContext ctx) {
-        try{
+        /*
+            try {
             Token id = ctx.ID().getSymbol();
             if(this.laTabla.buscar(ctx.ID().getText()) != null){
                 System.out.println("Error de alcances, variable "+ctx.ID().getText()+" ya declarada." + showErrorPosition(ctx.ID().getSymbol()));
@@ -121,6 +119,25 @@ public class AContextual extends AlphaParserBaseVisitor<Object> {
             int idType = (int) visit(ctx.typeDenoter());
             this.laTabla.insertar(id, idType,false);
         } catch (Exception e){}
+    * */
+
+    @Override
+    public Object visitConstDeclarationAST(AlphaParser.ConstDeclarationASTContext ctx) {
+        try {
+            int result = (int) visit(ctx.expression());
+            Token id = ctx.ID().getSymbol();
+            if(this.laTabla.buscar(ctx.ID().getText()) != null){
+                System.out.println("Error de alcances, variable "+ctx.ID().getText()+" ya declarada." + showErrorPosition(ctx.ID().getSymbol()));
+                throw new RuntimeException();
+            }else{
+                if (result == 0)
+                    this.laTabla.insertar(id, result, false);
+                else if (result == 1)
+                    this.laTabla.insertar(id, result, false);
+                else
+                    System.out.println("Error de tipos: Tipo de constante no válido." + showErrorPosition(ctx.ID().getSymbol()));
+            }
+        }catch (Exception e){}
         return null;
     }
 
@@ -130,6 +147,7 @@ public class AContextual extends AlphaParserBaseVisitor<Object> {
         visit(ctx.idDeclaration());
         return null;
     }
+
 
     @Override
     public Object visitTypeDenoterAST(AlphaParser.TypeDenoterASTContext ctx) {

@@ -27,7 +27,7 @@ actualParam : expression (Comma expression)*                              #actua
 
 declaration: singleDeclaration (Semicolon singleDeclaration)*             #declarationAST ;
 
-singleDeclaration: Const ID Tilde typeDenoter                             #constDeclarationAST
+singleDeclaration: Const ID Tilde expression                              #constDeclarationAST
                     | Var idDeclaration                                   #varDeclarationAST
                     | (typeDenoter|Void) ID LeftParen
                     paramDecls RightParen singleCommand                   #methodDeclarationAST;
