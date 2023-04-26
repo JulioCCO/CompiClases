@@ -109,17 +109,6 @@ public class AContextual extends AlphaParserBaseVisitor<Object> {
         }
         return null;
     }
-        /*
-            try {
-            Token id = ctx.ID().getSymbol();
-            if(this.laTabla.buscar(ctx.ID().getText()) != null){
-                System.out.println("Error de alcances, variable "+ctx.ID().getText()+" ya declarada." + showErrorPosition(ctx.ID().getSymbol()));
-                throw new RuntimeException();
-            }
-            int idType = (int) visit(ctx.typeDenoter());
-            this.laTabla.insertar(id, idType,false);
-        } catch (Exception e){}
-    * */
 
     @Override
     public Object visitConstDeclarationAST(AlphaParser.ConstDeclarationASTContext ctx) {
@@ -244,8 +233,6 @@ public class AContextual extends AlphaParserBaseVisitor<Object> {
         } catch (Exception e){}
         return null;
     }
-
-
 
     @Override
     public Object visitIdDeclAST(AlphaParser.IdDeclASTContext ctx) {
